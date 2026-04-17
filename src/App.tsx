@@ -2,8 +2,9 @@ import { useState } from "react";
 import { stopAll } from "./audio/player";
 import { PracticeMode } from "./PracticeMode";
 import { MysteryMode } from "./MysteryMode";
+import { ModalImprov } from "./ModalImprov";
 
-type Mode = "practice" | "mystery";
+type Mode = "practice" | "mystery" | "modal";
 
 const TAB_STYLE = (active: boolean): React.CSSProperties => ({
   padding: "8px 20px",
@@ -43,9 +44,14 @@ export function App() {
         <button style={TAB_STYLE(mode === "mystery")} onClick={() => switchMode("mystery")}>
           Mystery Mode
         </button>
+        <button style={TAB_STYLE(mode === "modal")} onClick={() => switchMode("modal")}>
+          Modal Improv
+        </button>
       </div>
 
-      {mode === "practice" ? <PracticeMode /> : <MysteryMode />}
+      {mode === "practice" && <PracticeMode />}
+      {mode === "mystery" && <MysteryMode />}
+      {mode === "modal" && <ModalImprov />}
     </div>
   );
 }
