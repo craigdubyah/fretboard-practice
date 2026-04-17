@@ -42,7 +42,7 @@ export function App() {
           Practice
         </button>
         <button style={TAB_STYLE(mode === "mystery")} onClick={() => switchMode("mystery")}>
-          Mystery Mode
+          Mystery Key
         </button>
         <button style={TAB_STYLE(mode === "modal")} onClick={() => switchMode("modal")}>
           Modal Improv
