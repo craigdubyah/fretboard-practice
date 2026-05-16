@@ -3,5 +3,4 @@ dist
 .vite
 *.log
 tsconfig.tsbuildinfo
-"src/**/*.js"  
-"src/**/*.js"    
+src/**/*.js
