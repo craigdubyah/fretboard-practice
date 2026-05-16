@@ -9,6 +9,7 @@ type Props = {
   rootPc?: number;
   thirdPc?: number;
   seventhPc?: number;
+  pcNames?: Record<number, string>;
 };
 
 /**
@@ -20,7 +21,7 @@ type Props = {
  * @param thirdPc - Pitch class of the third (colored green)
  * @param seventhPc - Pitch class of the seventh if present (colored yellow)
  */
-export function Fretboard({ highlightPcs, rootPc, thirdPc, seventhPc }: Props) {
+export function Fretboard({ highlightPcs, rootPc, thirdPc, seventhPc, pcNames }: Props) {
   const width = 1100;
   const height = 220;
   const padL = 40;
@@ -123,7 +124,7 @@ export function Fretboard({ highlightPcs, rootPc, thirdPc, seventhPc }: Props) {
             : isSeventh
             ? "#e8c93f"
             : "#2d6cdf";
-          const name = Note.pitchClass(Note.fromMidi(midi));
+          const name = pcNames?.[pc] ?? Note.pitchClass(Note.fromMidi(midi));
           dots.push(
             <g key={`${displayIdx}-${fret}`}>
               <circle

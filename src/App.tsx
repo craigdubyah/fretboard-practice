@@ -3,8 +3,9 @@ import { stopAll } from "./audio/player";
 import { PracticeMode } from "./PracticeMode";
 import { MysteryMode } from "./MysteryMode";
 import { ModalImprov } from "./ModalImprov";
+import { ChooseChords } from "./ChooseChords";
 
-type Mode = "practice" | "mystery" | "modal";
+type Mode = "practice" | "mystery" | "modal" | "choose";
 
 const TAB_STYLE = (active: boolean): React.CSSProperties => ({
   padding: "8px 20px",
@@ -47,11 +48,15 @@ export function App() {
         <button style={TAB_STYLE(mode === "modal")} onClick={() => switchMode("modal")}>
           Modal Improv
         </button>
+        <button style={TAB_STYLE(mode === "choose")} onClick={() => switchMode("choose")}>
+          Choose Chords
+        </button>
       </div>
 
       {mode === "practice" && <PracticeMode />}
       {mode === "mystery" && <MysteryMode />}
       {mode === "modal" && <ModalImprov />}
+      {mode === "choose" && <ChooseChords />}
     </div>
   );
 }

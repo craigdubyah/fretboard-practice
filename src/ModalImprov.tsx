@@ -213,6 +213,7 @@ export function ModalImprov() {
           rootPc={current.rootPc}
           thirdPc={current.thirdPc}
           seventhPc={current.seventhPc}
+          pcNames={current.pcNames}
         />
       )}
     </div>

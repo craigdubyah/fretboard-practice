@@ -1,4 +1,4 @@
-import { Chord, Note } from "tonal";
+import { Chord, Interval, Note } from "tonal";
 
 export type ChordVoicing = {
   symbol: string;
@@ -7,6 +7,7 @@ export type ChordVoicing = {
   thirdPc: number;
   seventhPc?: number;
   voicedMidi: number[];
+  pcNames: Record<number, string>;
 };
 
 /**
@@ -24,6 +25,30 @@ const PC = (name: string) => Note.chroma(name)!;
  */
 export function sixthChordSymbol(symbol: string): string {
   return Chord.get(symbol).tonic + "6";
+}
+
+/**
+ * Return a copy of a ChordVoicing with the perfect 5th removed (shell voicing).
+ * Only drops the note whose interval is "5P"; altered 5ths (dim, aug) are kept.
+ * If the chord has no perfect 5th, returns the original voicing unchanged.
+ */
+export function toShellVoicing(v: ChordVoicing): ChordVoicing {
+  const info = Chord.get(v.symbol);
+  const fifthIdx = info.intervals.indexOf("5P");
+  if (fifthIdx === -1) return v;
+  const fifthPc = PC(info.notes[fifthIdx]);
+  const fifthSemis = Interval.semitones("5P")!;
+  const rootMidi = v.voicedMidi[0];
+  let fifthMidi = rootMidi + fifthSemis;
+  while (fifthMidi < rootMidi) fifthMidi += 12;
+  const pcNames = { ...v.pcNames };
+  delete pcNames[fifthPc];
+  return {
+    ...v,
+    pitchClasses: v.pitchClasses.filter((pc) => pc !== fifthPc),
+    voicedMidi: v.voicedMidi.filter((m) => m !== fifthMidi),
+    pcNames,
+  };
 }
 
 /**
@@ -48,6 +73,10 @@ export function buildChord(symbol: string, rootOctave = 3): ChordVoicing {
   });
   const voicedMidi =
     stacked.length >= 4 ? stacked.slice(0, 5) : [...stacked, rootMidi + 12];
+  const pcNames: Record<number, string> = {};
+  for (const n of info.notes) {
+    pcNames[PC(n)] = Note.pitchClass(n);
+  }
   return {
     symbol,
     pitchClasses: info.notes.map(PC),
@@ -55,5 +84,6 @@ export function buildChord(symbol: string, rootOctave = 3): ChordVoicing {
     thirdPc: PC(info.notes[1]),
     seventhPc: info.notes.length >= 4 ? PC(info.notes[3]) : undefined,
     voicedMidi,
+    pcNames,
   };
 }

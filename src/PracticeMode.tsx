@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Fretboard } from "./fretboard/Fretboard";
-import { buildChord, sixthChordSymbol } from "./theory/chords";
+import { buildChord, sixthChordSymbol, toShellVoicing } from "./theory/chords";
 import {
   KEYS, KeyName, PROGRESSIONS, getProgression,
   randomDiatonic, randomChromatic,
@@ -39,6 +39,7 @@ export function PracticeMode() {
   const [keyName, setKeyName] = useState<KeyName>("C");
   const [progressionId, setProgressionId] = useState(PROGRESSIONS[0].id);
   const [useSevenths, setUseSevenths] = useState(false);
+  const [shellVoicing, setShellVoicing] = useState(false);
   const [measures, setMeasures] = useState(4);
   const [allowNonStandard, setAllowNonStandard] = useState(false);
   const [randomChords, setRandomChords] = useState<string[] | null>(null);
@@ -79,15 +80,19 @@ export function PracticeMode() {
       : getProgression(progressionId, keyName, useSevenths);
 
   const chords = useMemo(
-    () => chordSymbols.map((s) => buildChord(s)),
-    [chordSymbols],
+    () => chordSymbols.map((s) => {
+      const c = buildChord(s);
+      return shellVoicing ? toShellVoicing(c) : c;
+    }),
+    [chordSymbols, shellVoicing],
   );
   const current = chords[index] ?? chords[0];
 
   const sixthMidi = useMemo(() => {
     if (!selectedProg?.shuffleSixth || !current) return null;
-    return buildChord(sixthChordSymbol(current.symbol)).voicedMidi;
-  }, [selectedProg?.shuffleSixth, current?.symbol]);
+    const sixth = buildChord(sixthChordSymbol(current.symbol));
+    return shellVoicing ? toShellVoicing(sixth).voicedMidi : sixth.voicedMidi;
+  }, [selectedProg?.shuffleSixth, current?.symbol, shellVoicing]);
 
   const secondsPerBeat = 60 / bpm;
   const secondsPerChord = secondsPerBeat * BEATS_PER_CHORD;
@@ -194,6 +199,16 @@ export function PracticeMode() {
           7th chords
         </label>
 
+        <label style={{ color: "#ccc", fontSize: 14, marginLeft: 8 }}>
+          <input
+            type="checkbox"
+            checked={shellVoicing}
+            onChange={(e) => setShellVoicing(e.target.checked)}
+            style={{ marginRight: 6 }}
+          />
+          Shell chords
+        </label>
+
         <label style={{ color: "#ccc", fontSize: 14, marginLeft: 8 }}>Tempo</label>
         <input
           type="range" min={40} max={200} value={bpm}
@@ -256,6 +271,7 @@ export function PracticeMode() {
           rootPc={current.rootPc}
           thirdPc={current.thirdPc}
           seventhPc={current.seventhPc}
+          pcNames={current.pcNames}
         />
       )}
     </div>

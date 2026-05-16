@@ -1,8 +1,8 @@
 import { Key } from "tonal";
 
 export const KEYS = [
-  "C", "G", "D", "A", "E", "B",
-  "F#", "Db", "Ab", "Eb", "Bb", "F",
+  "C", "Db", "D", "Eb", "E", "F",
+  "F#", "G", "Ab", "A", "Bb", "B",
 ] as const;
 
 export type KeyName = (typeof KEYS)[number];
