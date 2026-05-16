@@ -90,7 +90,7 @@ export function Fretboard({ highlightPcs, rootPc, thirdPc, seventhPc, pcNames }:
         );
       })}
 
-      {TUNING_MIDI.slice().reverse().map((openMidi, displayIdx) => {
+      {TUNING_MIDI.slice().reverse().map((_, displayIdx) => {
         const y = padT + displayIdx * stringGap;
         return (
           <text
